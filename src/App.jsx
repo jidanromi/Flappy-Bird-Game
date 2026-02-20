@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Analytics } from "@vercel/analytics/react";
 import { track } from "@vercel/analytics";
 import Game from './Game';
@@ -17,6 +17,41 @@ function App() {
   const [highScore, setHighScore] = useState(() => parseInt(localStorage.getItem('flappyHighScore') || '0'));
   const [selectedChar, setSelectedChar] = useState(() => localStorage.getItem('flappyChar') || '🐥');
   const [theme, setTheme] = useState('day');
+  const [isMuted, setIsMuted] = useState(() => localStorage.getItem('flappyMuted') === 'true');
+
+  const audioRefs = useRef({
+    bgm: new Audio('https://assets.mixkit.co/music/preview/mixkit-game-level-music-689.mp3'),
+    jump: new Audio('https://www.soundjay.com/buttons/sounds/button-27.mp3'),
+    score: new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3'),
+    death: new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3')
+  });
+
+  useEffect(() => {
+    const { bgm } = audioRefs.current;
+    bgm.loop = true;
+    bgm.volume = 0.3;
+    if (!isMuted && gameState === 'PLAYING') {
+      bgm.play().catch(() => { });
+    } else {
+      bgm.pause();
+    }
+    return () => bgm.pause();
+  }, [isMuted, gameState]);
+
+  const playSound = (type) => {
+    if (isMuted) return;
+    const sound = audioRefs.current[type];
+    if (sound) {
+      sound.currentTime = 0;
+      sound.play().catch(() => { });
+    }
+  };
+
+  const toggleMute = () => {
+    const newMuted = !isMuted;
+    setIsMuted(newMuted);
+    localStorage.setItem('flappyMuted', newMuted.toString());
+  };
 
   useEffect(() => {
     if (score > highScore) {
@@ -31,8 +66,12 @@ function App() {
 
   const startGame = () => {
     setGameState('PLAYING');
-    // Melacak event ketika tombol Start diklik
     track('start_game', { character: selectedChar });
+
+    // Play BGM on first interaction
+    if (!isMuted) {
+      audioRefs.current.bgm.play().catch(e => console.log("BGM play failed:", e));
+    }
   };
 
   const restartGame = () => {
@@ -51,6 +90,14 @@ function App() {
   return (
     <div className={`game-container ${theme}`}>
       <div className="score-display">{score}</div>
+
+      <div
+        className={`sound-control ${isMuted ? 'muted' : ''}`}
+        onClick={toggleMute}
+        title={isMuted ? 'Unmute' : 'Mute'}
+      >
+        {isMuted ? '🔇' : '🎵'}
+      </div>
 
       {gameState === 'START' && (
         <div className="overlay">
@@ -95,6 +142,8 @@ function App() {
         setHighScore={setHighScore}
         character={selectedChar}
         theme={theme}
+        isMuted={isMuted}
+        playSound={playSound}
       />
 
       {/* Komponen Analytics ini yang akan mencatat jumlah pengunjung */}

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 
-const Game = ({ gameState, setGameState, score, setScore, highScore, character, theme }) => {
+const Game = ({ gameState, setGameState, score, setScore, highScore, character, theme, isMuted, playSound }) => {
     const canvasRef = useRef(null);
     const requestRef = useRef();
 
@@ -24,7 +24,7 @@ const Game = ({ gameState, setGameState, score, setScore, highScore, character, 
     const handleJump = () => {
         if (gameState !== 'PLAYING') return;
         stats.current.birdVelocity = JUMP_STRENGTH;
-        new Audio('https://assets.mixkit.co/sfx/preview/mixkit-player-jumping-in-a-video-game-2043.mp3').play().catch(() => { });
+        playSound('jump');
     };
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const Game = ({ gameState, setGameState, score, setScore, highScore, character, 
                 pipe.passed = true;
                 s.lastScore++;
                 setScore(s.lastScore);
-                new Audio('https://assets.mixkit.co/sfx/preview/mixkit-video-game-faint-click-2052.mp3').play().catch(() => { });
+                playSound('score');
             }
 
             // Collision
@@ -115,7 +115,7 @@ const Game = ({ gameState, setGameState, score, setScore, highScore, character, 
 
     const gameOver = () => {
         setGameState('GAME_OVER');
-        new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-changing-tab-206.mp3').play().catch(() => { });
+        playSound('death');
         return false;
     };
 
