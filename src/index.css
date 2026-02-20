@@ -1,0 +1,180 @@
+:root {
+  --primary-color: #f7d417;
+  --secondary-color: #2ecc71;
+  --text-color: #ffffff;
+  --bg-day: linear-gradient(to bottom, #4ec0ca 0%, #ffffff 100%);
+  --bg-night: linear-gradient(to bottom, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+  --font-main: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: #222;
+  color: var(--text-color);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 700px;
+  background: var(--bg-day);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  touch-action: none;
+  /* Mencegah zoom/scroll saat main di HP */
+}
+
+@media (max-width: 450px) {
+  .game-container {
+    max-width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
+.game-container.night {
+  background: var(--bg-night);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Agar canvas memenuhi layar HP */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  text-align: center;
+  padding: 20px;
+  transition: opacity 0.3s ease;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 0px #000;
+  animation: bounce 2s infinite ease-in-out;
+}
+
+.btn {
+  padding: 12px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: var(--primary-color);
+  color: #333;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #c4a712;
+  transition: all 0.1s transform;
+  margin: 10px;
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #c4a712;
+}
+
+.score-display {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 3rem;
+  font-weight: 900;
+  text-shadow: 3px 3px 0px #000;
+  z-index: 5;
+}
+
+.character-select {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.char-option {
+  width: 70px;
+  height: 70px;
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.char-option.selected {
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.char-option.locked {
+  filter: grayscale(1);
+  opacity: 0.5;
+  position: relative;
+}
+
+.char-option.locked::after {
+  content: '🔒';
+  position: absolute;
+  font-size: 12px;
+  bottom: 0;
+  right: 0;
+}
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.high-score {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
