@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from "@vercel/analytics/react";
+import { track } from "@vercel/analytics";
 import Game from './Game';
 import './index.css';
 
@@ -29,6 +31,8 @@ function App() {
 
   const startGame = () => {
     setGameState('PLAYING');
+    // Melacak event ketika tombol Start diklik
+    track('start_game', { character: selectedChar });
   };
 
   const restartGame = () => {
@@ -92,6 +96,9 @@ function App() {
         character={selectedChar}
         theme={theme}
       />
+
+      {/* Komponen Analytics ini yang akan mencatat jumlah pengunjung */}
+      <Analytics />
     </div>
   );
 }
